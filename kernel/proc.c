@@ -124,6 +124,7 @@ allocproc(void)
 found:
   p->pid = allocpid();
   p->state = USED;
+  p->tickets = 1;  // dar um ticket para todas as novas tarefas
 
   // Allocate a trapframe page.
   if ((p->trapframe = (struct trapframe *)kalloc()) == 0) {
@@ -271,6 +272,7 @@ kfork(void)
   if (uvmcopy(p->pagetable, np->pagetable, p->sz) < 0) {
     freeproc(np);
     release(&np->lock);
+    np->tickets = p->tickets; //copia os tickets do pai para o filho
     return -1;
   }
   np->sz = p->sz;
@@ -318,6 +320,21 @@ reparent(struct proc *p)
     }
   }
 }
+
+
+int
+settickets(int number)
+{
+  if(number < 1)
+    return -1;                       //funcao que altera o numero de tickets, se for maior quer um altera, se for menor que 1 ele nao deixa alterar
+
+  myproc()->tickets = number;
+
+  return 0;
+}
+
+
+
 
 // Exit the current process.  Does not return.
 // An exited process remains in the zombie state
