@@ -110,14 +110,13 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
-// funcao que faz a alteraçao (recebida pelo usuario )
+// funcao que faz a alteraçao (recebida pelo usuario e manda para o settickets)
 uint64
 sys_settickets(void)
 {
   int number;
 
-  if(argint(0, &number) < 0)
-    return -1;
+  argint(0, &number);
 
   return settickets(number);
 }
