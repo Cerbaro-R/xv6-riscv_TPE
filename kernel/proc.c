@@ -125,7 +125,8 @@ found:
   p->pid = allocpid();
   p->state = USED;
   p->tickets = 1;  // dar um ticket para todas as novas tarefas
-
+  p->contator = 0;
+  p->last_lottery = -1;  // nao sorteado
   // Allocate a trapframe page.
   if ((p->trapframe = (struct trapframe *)kalloc()) == 0) {
     freeproc(p);
@@ -332,9 +333,24 @@ settickets(int number)
 
   return 0;
 }
-
-
-
+//------------------------
+int
+getcontator(void)
+{
+  return myproc()->contator;         // so para conseguir ver o contator é necessario criar uma funçao...isso esta ficando longo
+}
+//-----------------------------------
+int
+getlastlottery(void)
+{
+  return myproc()->last_lottery; 	// pegar o numero sorteado
+}
+//---------------------------------------
+int
+gettickets(void)
+{
+  return myproc()->tickets;             //pegar o ticket
+}
 
 // Exit the current process.  Does not return.
 // An exited process remains in the zombie state
@@ -450,42 +466,68 @@ scheduler(void)
 
   c->proc = 0;
   for (;;) {
-    // The most recent process to run may have had interrupts
-    // turned off; enable them to avoid a deadlock if all
-    // processes are waiting. Then turn them back off
-    // to avoid a possible race between an interrupt
-    // and wfi.
     intr_on();
     intr_off();
 
-    int found = 0;
+    int total = 0;
+
+    //  soma os tickets dos processos
     for (p = proc; p < &proc[NPROC]; p++) {
       acquire(&p->lock);
-      if (p->state == RUNNABLE) {
-        // Switch to chosen process.  It is the process's job
-        // to release its lock and then reacquire it
-        // before jumping back to us.
-        p->state = RUNNING;
-        c->proc = p;
-        swtch(&c->context, &p->context);
 
-        // Don't re-enable interrupts on release.
-        mycpu()->intena = 0;
+      if (p->state == RUNNABLE)
+        total += p->tickets;
 
-        // Process is done running for now.
-        // It should have changed its p->state before coming back.
-        c->proc = 0;
-        found = 1;
-      }
       release(&p->lock);
     }
+
+    int found = 0;
+
+    if (total > 0) {
+      // Sorteia um número 
+      int winner = random() % total;
+
+      int count = 0;
+
+      // procura o processo vencedor
+      for (p = proc; p < &proc[NPROC]; p++) {
+        acquire(&p->lock);
+
+        if (p->state == RUNNABLE) {
+          count += p->tickets;
+
+          if (count > winner) {
+	   
+	    p->last_lottery = winner;
+	    p->contator++;   // somar ao contator de vezes que o processo foi escolhido/sorteato
+            // Encontra o processo vencedor
+            p->state = RUNNING;
+            c->proc = p;
+
+            swtch(&c->context, &p->context);
+
+            // Don't re-enable interrupts on release.
+            mycpu()->intena = 0;
+
+            // Process is done running for now.
+            c->proc = 0;
+            found = 1;
+
+            release(&p->lock);
+            break;
+          }
+        }
+
+        release(&p->lock);
+      }
+    }
+
     if (found == 0) {
       // nothing to run; stop running on this core until an interrupt.
       asm volatile("wfi");
     }
   }
 }
-
 // Switch to scheduler.  Must hold only p->lock
 // and have changed proc->state. Saves and restores
 // intena because intena is a property of this

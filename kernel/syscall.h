@@ -22,3 +22,6 @@
 #define SYS_close  21
 #define SYS_sync   22
 #define SYS_settickets 23
+#define SYS_getcontator 24
+#define SYS_getlastlottery 25
+#define SYS_gettickets 26

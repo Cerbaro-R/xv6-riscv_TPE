@@ -120,3 +120,21 @@ sys_settickets(void)
 
   return settickets(number);
 }
+// funçao que retorna o contator no processo
+uint64
+sys_getcontator(void)
+{
+  return getcontator();
+}
+// mesma coisa so que para pegar os novos valores, eu estou começando a pegar raiva do xv6
+uint64
+sys_getlastlottery(void)
+{
+  return getlastlottery();
+}
+
+uint64
+sys_gettickets(void)
+{
+  return gettickets();
+}
