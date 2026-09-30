@@ -151,7 +151,9 @@ UPROGS=\
 	$U/_forphan\
 	$U/_dorphan\
 	$U/_sync\
-	$U/_teste\
+	$U/_testtickets\
+	$U/_testlottery\
+	$U/_testcont\
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)
