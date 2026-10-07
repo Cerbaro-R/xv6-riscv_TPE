@@ -8,6 +8,7 @@ OBJS = \
   $K/printk.o \
   $K/uart.o \
   $K/kalloc.o \
+  $K/random.o \
   $K/spinlock.o \
   $K/string.o \
   $K/main.o \
@@ -150,7 +151,9 @@ UPROGS=\
 	$U/_forphan\
 	$U/_dorphan\
 	$U/_sync\
-	$U/_teste\
+	$U/_testtickets\
+	$U/_testlottery\
+	$U/_testcont\
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)
@@ -172,7 +175,7 @@ QEMUGDB = $(shell if $(QEMU) -help | grep -q '^-gdb'; \
 	then echo "-gdb tcp::$(GDBPORT)"; \
 	else echo "-s -p $(GDBPORT)"; fi)
 ifndef CPUS
-CPUS := 3
+CPUS := 1
 endif
 
 QEMUOPTS = -machine virt -bios none -kernel $K/kernel -m 128M -smp $(CPUS) -nographic
