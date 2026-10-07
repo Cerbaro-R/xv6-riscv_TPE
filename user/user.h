@@ -25,6 +25,10 @@ char *sys_sbrk(int, int);
 int pause(int);
 int uptime(void);
 int sync(void);
+int settickets(int);
+int getcontator(void);
+int getlastlottery(void);
+int gettickets(void);
 
 // ulib.c
 int stat(const char *, struct stat *);
