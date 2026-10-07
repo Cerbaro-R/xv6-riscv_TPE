@@ -1,4 +1,12 @@
+cd ~/xv6-riscv
+make clean
+make qemu
 
+testcont
+testlottery
+testtickets
+
+essas sao as funçoes existentes, use testlottery para ver as coisas mais importantes
 
 xv6 is a re-implementation of Dennis Ritchie's and Ken Thompson's Unix
 Version 6 (v6).  xv6 loosely follows the structure and style of v6,
