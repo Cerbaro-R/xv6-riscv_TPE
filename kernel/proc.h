@@ -89,6 +89,10 @@ struct proc {
   int xstate;           // Exit status to be returned to parent's wait
   int pid;              // Process ID
 
+  int tickets;          // para os tickets
+  int contator;		// contar para mostrar quantas vezes o processo foi escolhido
+  int last_lottery;     //ultimo numero sorteado
+	
   // wait_lock must be held when using this:
   struct proc *parent; // Parent process
 
