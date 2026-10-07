@@ -110,3 +110,31 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+// funcao que faz a alteraçao (recebida pelo usuario e manda para o settickets)
+uint64
+sys_settickets(void)
+{
+  int number;
+
+  argint(0, &number);
+
+  return settickets(number);
+}
+// funçao que retorna o contator no processo
+uint64
+sys_getcontator(void)
+{
+  return getcontator();
+}
+// mesma coisa so que para pegar os novos valores, eu estou começando a pegar raiva do xv6
+uint64
+sys_getlastlottery(void)
+{
+  return getlastlottery();
+}
+
+uint64
+sys_gettickets(void)
+{
+  return gettickets();
+}
